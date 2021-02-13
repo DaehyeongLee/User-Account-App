@@ -5,13 +5,39 @@ const express = require('express')
 const app = express()
 const port = 5000
 
+const bodyParser = require('body-parser');
+//application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({extended: true}));
+//application/json
+app.use(bodyParser.json());
+
+const config = require('./config/key') //DB 정보를 외부에 노출하지 않기 위해 key를 설정
+
+const {User} = require('./models/User');
+
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://daelee:1@boilerplate.0pvpi.mongodb.net/<dbname>?retryWrites=true&w=majority', {
+mongoose.connect(config.mongoURI, { //mongodb 홈페이지 connect에서 정보 가져와 커넥트
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
 }).then( () => console.log('MongoDB Connected success...'))
 .catch(err => console.log(err))
 
-app.get('/', (req, res) => res.send("Hello World!"))
+//기본 route
+app.get('/', (req, res) => res.send("Hello World!!"))
+
+//회원 가입 route
+app.post('/register', (req, res) => {
+    //회원가입 할때 필요한 정보들을 client에서 가져오면
+    //그것들을 데이터 베이스에 넣어준다.
+    const user = new User(req.body) //req.body는 json 형식으로 넘어온다
+
+    user.save((err, doc) => {
+        if(err) return res.json({success: false, err})
+        return res.status(200).json({
+            success: true //성공했을 시 success true가 뜬다
+        })
+    }) //user model에 저장이 된다.
+
+})
 
 app.listen(port, () => console.log('Example app listening on port ' + port))
 
@@ -23,8 +49,10 @@ app.listen(port, () => console.log('Example app listening on port ' + port))
 //초기 git 저장소 생성 git init, git 상태 확인: git status
 //Git 설정: Working Directory ---git add---> Staging Area ---git Commit---> Git repository---git push--->Git Remote(github) 
 //Local을 Remote에 연결하기 위해 ssh 설정 필요. 이는 git ssh 검색 후 따라하면 된다.
+//ssh 설치 되있는지 확인: git bash에서 ls -a ~/.ssh
 
 //Body Parser를 통해 클라이언트(브라우저)의 입력값을 서버로 가져올 수 있다. -> npm install body-parser --save
+//Body 데이터를 분석(Parse)해서 req.body로 출력해주는 것이다
 //postman을 통해 json 형식으로 client에서 서버로 값을 보내줄 수 있다. 
 
 //node mon: 서버를 내리고 올리지 않아도 소스의 변화를 감지해서 보여줌 ==> npm install nodemon --save-dev
