@@ -6,10 +6,13 @@ const app = express()
 const port = 5000
 
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 //application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: true}));
 //application/json
 app.use(bodyParser.json());
+//cookie
+app.use(cookieParser());
 
 const config = require('./config/key') //DB 정보를 외부에 노출하지 않기 위해 key를 설정
 
@@ -56,7 +59,13 @@ app.post('/login', (req, res) => {
         
             //비밀번호까지 맞다면 토큰을 생성하기.
             user.generateToken((err, user) => {
-                
+                if(err) return res.status(400).send(err); //400은 에러가 있다는 뜻
+
+                //토큰을 저장한다. 쿠키?, 로컬스토리지?
+                res.cookie("x_auth", user.token) //x_auth 이름으로 쿠키가 들어감
+                .status(200)
+                .json({loginSuccess: true, userId: user._id})
+
             })
         })
 
@@ -69,9 +78,6 @@ app.post('/login', (req, res) => {
 
 
 app.listen(port, () => console.log('Example app listening on port ' + port))
-
-
-
 
 //메모: mongodb 홈페이지 -> Network Access -> Add 클릭 후 내 IP 등록 -> npm run start
 
@@ -88,3 +94,5 @@ app.listen(port, () => console.log('Example app listening on port ' + port))
 //package.json에 "nodemon": "nodemon index.js" 추가하고 ==> npm run nodemon
 
 //bcrypt: 비밀번호를 암호화하여 DB에 저장하기 위한 라이브러리 ==> npm install bcrypt --save
+//jsonwebtoken: 토큰을 생성하기 위한 라이브러리 ==> npm install jsonwebtoken --save
+//토큰을 쿠키에 저장하기 위해 cookie-parser 라이브러리 필요 ==> npm install cookie-parser --save
