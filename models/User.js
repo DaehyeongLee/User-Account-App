@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const saltRounds = 10; //salt가 몇글자인지 나타낸다.
 
 const userSchema = mongoose.Schema({
     name: {
@@ -30,6 +32,37 @@ const userSchema = mongoose.Schema({
         type: Number
     }
 })
+
+userSchema.pre('save', function(next) {
+    var user = this;
+
+    //password가 변경될때만 아래 조건을 실행한다
+    if(user.isModified('password')) {
+        //비밀번호를 암호화 시킨다.
+        bcrypt.genSalt(saltRounds, function(err, salt) {
+            if (err) return next(err)
+                        
+            bcrypt.hash(user.password, salt, function(err, hash) {
+                if(err) return next(err)
+                user.password = hash; //password 를 hash로 교체해준다
+                next()
+            })
+        })
+
+    } else {
+        next() //이것이 있어야 다음으로 넘어간다.
+    }        
+
+})
+
+userSchema.methods.comparePassword = function(plainPassword, cb) {
+    //plainPassword 1234567 암호화된 비밀번호 sasdqoiwhid~~
+    //두 비밀번호가 같은지 체크할려면?? 
+    bcrypt.compare(plainPassword, this.password, function(err, isMatch) {
+        if(err) return cb(err)
+        cb(null, isMatch)
+    })
+}
 
 const User = mongoose.model('User', userSchema)
 
