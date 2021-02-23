@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 
+//렌더링되어 페이지에 보이는 부분
 function App() {
   return (
     <div className="App">

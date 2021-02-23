@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 const config = require('./config/key') //DB 정보를 외부에 노출하지 않기 위해 key를 설정
-const { auth } = require('./middleware/auth')
+const { auth } = require('../middleware/auth')
 
 const {User} = require('./models/User');
 
@@ -120,3 +120,7 @@ app.listen(port, () => console.log('Example app listening on port ' + port))
 //토큰을 쿠키에 저장하기 위해 cookie-parser 라이브러리 필요 ==> npm install cookie-parser --save
 
 //auth 기능 구현: Server쪽 DB 토큰, Client쪽 쿠키 토큰이 일치하는지 확인하는것
+
+/*************************************************************** */
+//npm이란? registry를 담고 있는 라이브러리 역할, 빌드 또한 npm
+//npx이란? npm registry에서 create-react-app을 찾아서 다운로드 없이 실행
