@@ -3,7 +3,7 @@
 //DB 연결: 몽구스를 설치한다 -> npm install mongoose --save
 const express = require('express')
 const app = express()
-const port = 5000
+const port = 5000;
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 const config = require('./config/key') //DB 정보를 외부에 노출하지 않기 위해 key를 설정
-const { auth } = require('../middleware/auth')
+const { auth } = require('./middleware/auth')
 
 const {User} = require('./models/User');
 
@@ -98,6 +98,11 @@ app.get('/api/users/logout', auth, (req, res) => {
         })
     })
 })
+
+app.get('/api/hello', (req, res) => {
+    res.send("Hello!")
+})
+
 
 app.listen(port, () => console.log('Example app listening on port ' + port))
 

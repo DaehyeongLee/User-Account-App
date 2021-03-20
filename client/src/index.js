@@ -5,6 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 //여기 안에 보여지고 싶은 컴포넌트를 넣는다
+//concurrently는? client server와 back server를 같이 켜주기 위함
+//-> "dev": "concurrently \"npm run nodemon\" \"npm run start --prefix client\""
 ReactDOM.render(
   <React.StrictMode>
     <App />
