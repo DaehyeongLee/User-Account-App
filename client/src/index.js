@@ -5,14 +5,24 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import 'antd/dist/antd.css'; //CSS 프레임워크 npm install antd --save
+import {Provider} from 'react-redux';
+import { applyMiddleware, createStore } from 'redux';
+import promiseMiddleware from 'redux-promise';
+import ReduxThunk from 'redux-thunk';
+import Reducer from './_reducers';
+
+const createStoreWithMiddleware = applyMiddleware(promiseMiddleware, ReduxThunk)(createStore)
 
 //여기 안에 보여지고 싶은 컴포넌트를 넣는다
 //concurrently는? client server와 back server를 같이 켜주기 위함
 //-> "dev": "concurrently \"npm run nodemon\" \"npm run start --prefix client\""
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store = {createStoreWithMiddleware(Reducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ &&
+    window.__REDUX_DEVTOOLS_EXTENSION__()
+  )}>
     <App />
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('root') //index.html에 id가 root인 부분
 );
 
@@ -37,3 +47,11 @@ reportWebVitals();
 //  } 
 
 //Redux: Store를 통해 state를 감싸주어 관리
+//Redux 설치: npm install redux react-redux redux-promise redux-thunk --save
+//redux-promise, redux-thunk는 미들웨어이다
+//Redux data flow:
+//action -> reducer -> store ---subscribe--> react component --dispatch--> action
+
+//React Hook: functional component에서도 lifecycle을 사용할 수 있게 하는 것
+//React Hook Ex) const [Name, setName] = useState("") //this.state 대신 사용하는 것
+//React Hook Ex) useEffect(() => {~~}) //componentDidMount() 대신 사용하는 것
