@@ -10,6 +10,7 @@ import LoginPage from './components/views/LoginPage/LoginPage';
 //import NavBar from './components/views/NavBar/NavBar';
 import RegisterPage from './components/views/RegisterPage/RegisterPage';
 //import Footer from './components/views/Footer/Footer';
+import Auth from './hoc/auth';
 
 //렌더링되어 페이지에 보이는 부분
 //라우터를 여기에 설정해준다
@@ -26,14 +27,14 @@ function App() {
           of them to render at a time
         */}
         <Switch>
-          <Route exact path="/" component = {LandingPage} />
+          <Route exact path="/" component = {Auth(LandingPage, null )} />
           {/* 위 문장과 동일!
             <Route exact path = "/">
               <LandingPage />
             </Route>          
           */}
-          <Route exact path="/login" component = {LoginPage} />
-          <Route exact path="/register" component = {RegisterPage} />
+          <Route exact path="/login" component = {Auth(LoginPage, false)} />
+          <Route exact path="/register" component = {Auth(RegisterPage, false)} />
         </Switch>
       </div>
     </Router>
